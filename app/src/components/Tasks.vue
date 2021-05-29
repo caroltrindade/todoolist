@@ -15,11 +15,9 @@
         </tr>
         <tr v-for="(task, index) in tasks" :key="task.id">
           <td style="width: 20%">{{task.id}}</td>
-          <td style="width: 20%">{{task.solicitante}}</td>
+          <td style="width: 20%">{{task.description}}</td>
           <td style="width: 40%">
-            {{task.solicitado}}
-            <span v-if="task.urgente">URGENTE</span>
-            <span v-else-if="!task.urgente">relaxxxx</span>
+            {{task.responsibleName}} ({{task.responsibleEmail}})
           </td>
           <td style="width: 20%">
             <Loading v-if="isLoading[task.id]">Carregando...</Loading>

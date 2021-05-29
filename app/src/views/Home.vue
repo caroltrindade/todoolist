@@ -65,6 +65,7 @@ export default {
   methods: {
     async getList() {
       const res = await this.request({ id: 'list', url: 'http://localhost:3333/tasks'});
+      console.log('res', res);
 
       if (res && Array.isArray(res.data)) this.tasks = res.data;
     },
@@ -81,7 +82,6 @@ export default {
           url,
           data,
         });
-        console.log('res axios', res);
         
         this.resetForm();
 
@@ -93,23 +93,20 @@ export default {
         this.$set(this.isLoading, id, false);
       }
     },
+
     async addTask(task) {
-      console.log('task', task);
-      
       const res = await this.request({
         id: 'form',
         method: 'POST',
         url: 'http://localhost:3333/task',
         data: task,
       });
-      console.log('res', res);
-      
 
       if (res && res.status === 201) {
-        console.log('res', res);
         this.tasks.push(res.data);
       }
     },
+
     async remove(index) {
       const { id } = this.tasks[index];
 
@@ -123,6 +120,7 @@ export default {
         this.tasks.splice(index, 1);
       }
     },
+
     edit(index) {
       this.task = this.tasks[index];
 
@@ -132,6 +130,7 @@ export default {
         this.showForm = true;
       });
     },
+
     async finishTask(task) {
       console.log('TODO FINALIZA TASK');
       
@@ -139,6 +138,7 @@ export default {
 
       await this.updateTask(task);
     },
+
     async updateTask(task) {
       const res = await this.request({
         id: 'form',
@@ -152,6 +152,7 @@ export default {
         this.tasks.splice(index, 1, task);
       }
     },
+
     resetForm() {
       this.showForm = false;
       this.task = '';
@@ -167,9 +168,8 @@ export default {
         },
       });
 
+      // If the API doesn't work (because the plan limit has been exceeded, for example) the email will be validated with regex
       if (response.data.success === false) {
-        console.log('Problemas para comunicar com a API.');
-
         const formatValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(email);
 
         if (!formatValid)

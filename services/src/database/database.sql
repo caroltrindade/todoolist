@@ -9,3 +9,7 @@ CREATE TABLE IF NOT EXISTS Task (
     status_isFinished BOOLEAN  NOT NULL,
     status_backCount INT
 );
+
+CREATE USER "projects-user"@"localhost" IDENTIFIED WITH mysql_native_password BY "p@ss0wrd";
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON todolist.* TO 'projects-user'@'localhost';

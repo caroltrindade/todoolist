@@ -32,14 +32,14 @@ module.exports = class Connection {
 
     createDatabase() {
         try {
-            openConnection();
+            this.openConnection();
 
             this.connection.query('CREATE DATABASE IF NOT EXISTS todolist;', (err, rows) => {
-                console.log('err: ', err, '\n\n');
+                if (err) throw err;
             });
 
             this.connection.query('USE todolist;', (err, rows) => {
-                console.log('err: ', err, '\n\n');
+                if (err) throw err;
             });
 
             this.connection.query('\
@@ -51,12 +51,20 @@ module.exports = class Connection {
                 status_isFinished BOOLEAN  NOT NULL,\
                 status_backCount INT\
             );', (err, rows) => {
-                console.log('err: ', err, '\n\n');
+                if (err) throw err;
+            });
+
+            this.connection.query('CREATE USER "projects-user"@"localhost" IDENTIFIED WITH mysql_native_password BY "p@ss0wrd";', (err, rows) => {
+                if (err) throw err;
+            });
+
+            this.connection.query('GRANT SELECT, INSERT, UPDATE, DELETE ON todolist.* TO "projects-user"@"localhost";', (err, rows) => {
+                if (err) throw err;
             });
         } catch (error) {
             throw error;
         } finally {
-            closeConnection();
+            this.closeConnection();
         }
     };
 
@@ -69,7 +77,7 @@ module.exports = class Connection {
                 (task_description, responsible_name, responsible_email, status_isFinished, status_backCount)\
             VALUES (?, ?, ?, ?, ?);\
             ', [task.description, task.responsibleName, task.responsibleEmail, task.isFinished, task.backCount], (err, rows) => {
-                console.log('err: ', err, '\n\n');
+                if (err) throw err;
             });
         } catch (error) {
             throw error;
@@ -80,81 +88,88 @@ module.exports = class Connection {
 
     updateTask(task) {
         try {
-            openConnection();
+            this.openConnection();
 
             this.connection.query('\
             UPDATE todolist.Task\
                 SET task_description = ?, responsible_name = ?, responsible_email = ?, status_isFinished = ?, status_backCount = ?\
             WHERE task_id = ?;\
             ', [task.description, task.responsibleName, task.responsibleEmail, task.isFinished, task.backCount, task.id], (err, rows) => {
-                console.log('err: ', err, '\n\n');
+                if (err) throw err;
             });
         } catch (error) {
             throw error;
         } finally {
-            closeConnection();
+            this.closeConnection();
         }
     };
 
-    deleteTask(task) {
+    deleteTask(id) {
         try {
-            openConnection();
+            this.openConnection();
 
-            this.connection.query('DELETE FROM todolist.Task WHERE task_id = ?;', [task.id], (err, rows) => {
-                console.log('err: ', err, '\n\n');
+            this.connection.query('DELETE FROM todolist.Task WHERE task_id = ?;', [id], (err, rows) => {
+                if (err) throw err;
             });
         } catch (error) {
             throw error;
         } finally {
-            closeConnection();
+            this.closeConnection();
         }
     };
 
-    getTask(task) {
-        try {
-            openConnection();
+    getTask(id) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.openConnection();
 
-            this.connection.query('\
-            SELECT\
-                task_id AS id,\
-                task_description AS description,\
-                responsible_name AS responsibleName,\
-                responsible_email AS responsibleEmail,\
-                status_isFinished AS isFinished,\
-                status_backCount AS backCount\
-            FROM todolist.Task\
-            WHERE task_id = ?;\
-            ', [task.id], (err, rows) => {
-                console.log('err: ', err, '\n\n');
-            });
-        } catch (error) {
-            throw error;
-        } finally {
-            closeConnection();
-        }
+                this.connection.query('\
+                SELECT\
+                    task_id AS id,\
+                    task_description AS description,\
+                    responsible_name AS responsibleName,\
+                    responsible_email AS responsibleEmail,\
+                    status_isFinished AS isFinished,\
+                    status_backCount AS backCount\
+                FROM todolist.Task\
+                WHERE task_id = ?;\
+                ', [id], (err, rows) => {
+                    if (err) throw err;
+
+                    return resolve(rows);
+                });
+            } catch (error) {
+                reject(error);
+            } finally {
+                this.closeConnection();
+            }
+        });
     };
 
     listTasks() {
-        try {
-            openConnection();
+        return new Promise((resolve, reject) => {
+            try {
+                this.openConnection();
+    
+                this.connection.query('\
+                SELECT\
+                    task_id AS id,\
+                    task_description AS description,\
+                    responsible_name AS responsibleName,\
+                    responsible_email AS responsibleEmail,\
+                    status_isFinished AS isFinished,\
+                    status_backCount AS backCount\
+                FROM todolist.Task\
+                ', (err, rows) => {
+                    if (err) throw err;
 
-            this.connection.query('\
-            SELECT\
-                task_id AS id,\
-                task_description AS description,\
-                responsible_name AS responsibleName,\
-                responsible_email AS responsibleEmail,\
-                status_isFinished AS isFinished,\
-                status_backCount AS backCount\
-            FROM todolist.Task\
-            ', (err, rows) => {
-                console.log('err: ', err, '\n\n');
-            });
-        } catch (error) {
-            throw error;
-        } finally {
-            closeConnection();
-        }
+                    return resolve(rows);
+                });
+            } catch (error) {
+                reject(error);
+            } finally {
+                this.closeConnection();
+            }
+        });
     };
-    // createDatabase();
 }

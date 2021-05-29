@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install-all": "npm i && cd app && npm i",
+    "install-all": "npm i && cd app && npm i && cd .. && cd services && npm i && cd src/database && node buildDatabase.js",
     "app": "cd app && npm run serve",
     "api": "cd services && npm run api",
     "all": "npm-run-all -l -p app api"

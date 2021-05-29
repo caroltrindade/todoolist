@@ -1,7 +1,6 @@
 const Connection = require('../../database/Connection');
 
 function addTask(task) {
-  console.log('ENTROU ADD', task);
   const connection = new Connection();
 
   return connection.insertTask(task);
@@ -16,13 +15,13 @@ function editTask(task) {
 function removeTask(id) {
   const connection = new Connection();
 
-  return connection.updateTask(id);
+  return connection.deleteTask(id);
 }
 
-function detailTask(task) {
+function detailTask(id) {
   const connection = new Connection();
 
-  return connection.getTask(task);
+  return connection.getTask(id);
 }
 
 function listTasks() {

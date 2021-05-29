@@ -10,6 +10,8 @@ Para instalar o projeto e suas dependências, basta executar o comando abaixo:
 npm install
 ```
 
+Observação: Assim que o projeto for instalado o banco de dados é criado juntamente.
+
 ## Executar o ptojeto
 
 Para executar o projeto, basta executar o comando abaixo:

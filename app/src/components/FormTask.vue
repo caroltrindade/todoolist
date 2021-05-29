@@ -83,13 +83,12 @@ export default {
       this.editing = true;
     } else {
       this.editing = false;
-      this.formTask = { ...this.newTask };
+      this.formTask = { ...newTask };
     }
   },
   methods: {
     saveTask() {
       const taskToInsert = { ...this.formTask };
-      console.log('taskToInsert', taskToInsert);
 
       if (!this.editing) {
         this.$emit('add-task', taskToInsert);
@@ -98,7 +97,7 @@ export default {
       }
     },
     cancel() {
-      this.formTask = { ...this.newTask };
+      this.formTask = { ...newTask };
       this.editing = false;
     },
     closeForm() {
