@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "dir": {
+    "app": "app",
+    "api": "api"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install-all": "npm i && cd app && npm i && cd .. && cd services && npm i && cd src/database && node buildDatabase.js",
-    "app": "cd app && npm run serve",
-    "api": "cd services && npm run api",
+    "install-api": "cd services && npm install && cd ..",
+    "install-app": "cd app && npm install && cd ..",
+    "install-all": "npm i && npm run install-app && npm run install-api && npm run build",
+    "build": "npm run build --prefix api",
+    "app": "npm run serve --prefix app",
+    "api": "npm run start --prefix api",
     "all": "npm-run-all -l -p app api"
   },
   "repository": {
